@@ -2,6 +2,22 @@ import { defineComponent, onBeforeUnmount, onMounted, PropType, ref } from 'vue'
 import * as THREE from 'three'
 import { updateCamera } from './updateCamera'
 
+export module Vue3ThreeWrap {
+    export interface Parameters<
+        T extends THREE.Camera = THREE.PerspectiveCamera
+    > {
+        camera: T
+        renderer: THREE.WebGLRenderer
+        scene: THREE.Scene
+    }
+    export type Start<T extends THREE.Camera = THREE.PerspectiveCamera> = (
+        opts: Parameters<T>
+    ) => void
+    export type Update<T extends THREE.Camera = THREE.PerspectiveCamera> = (
+        opts: Parameters<T>
+    ) => void
+}
+
 const fill = `position:absolute;
             top:0;
             right:0;
