@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { ThreeWrap, ThreeWrapStart, ThreeWrapUpdate } from './threejs'
+import { ThreeWrap } from './threejs'
 import * as THREE from 'three'
 
 // build a box
@@ -14,12 +14,12 @@ const box = new THREE.Mesh(
 box.position.z = -5
 
 // add the box
-const start: ThreeWrapStart = (opts) => {
+const start: Vue3ThreeWrap.Start = (opts) => {
     opts.scene.add(box)
 }
 
 // rotate the box
-const update: ThreeWrapUpdate = () => {
+const update: Vue3ThreeWrap.Update = () => {
     box.rotation.y -= 0.0166
 }
 </script>

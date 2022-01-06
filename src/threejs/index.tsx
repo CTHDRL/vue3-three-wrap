@@ -1,46 +1,42 @@
 import { defineComponent, onBeforeUnmount, onMounted, PropType, ref } from 'vue'
 import * as THREE from 'three'
 import { updateCamera } from './updateCamera'
-import './threeWrap.scss'
 
-export interface ThreeWrapOptions<
-    T extends THREE.Camera = THREE.PerspectiveCamera
-> {
-    camera: T
-    renderer: THREE.WebGLRenderer
-    scene: THREE.Scene
-}
-export type ThreeWrapStart<T extends THREE.Camera = THREE.PerspectiveCamera> = (
-    opts: ThreeWrapOptions<T>
-) => void
-export type ThreeWrapUpdate<T extends THREE.Camera = THREE.PerspectiveCamera> =
-    (opts: ThreeWrapOptions<T>) => void
+const fill = `position:absolute;
+            top:0;
+            right:0;
+            bottom:0;
+            left:0;
+            width:100%;
+            height:100%;`
 
 export const ThreeWrap = defineComponent({
     name: 'ThreeWrap',
     props: {
         camera: Object as PropType<
-            THREE.PerspectiveCamera | THREE.OrthographicCamera
+            THREE.Camera | THREE.PerspectiveCamera | THREE.OrthographicCamera
         >,
         cameraType: {
             type: String as PropType<'orthographic' | 'perspective'>,
             default: 'perspective',
         },
         fov: { type: Number, default: 75 },
+        removeStyling: {
+            type: Boolean,
+            default: false,
+        },
         rendererOptions: {
             type: Object as PropType<THREE.WebGLRendererParameters>,
             default: () => ({}),
         },
-        start: Function as PropType<
-            ThreeWrapStart<THREE.PerspectiveCamera | THREE.OrthographicCamera>
-        >,
-        update: Function as PropType<
-            ThreeWrapUpdate<THREE.PerspectiveCamera | THREE.OrthographicCamera>
-        >,
+        start: Function as PropType<Vue3ThreeWrap.Start>,
+        update: Function as PropType<Vue3ThreeWrap.Update>,
     },
     setup(props) {
-        const canvas = ref(<canvas />)
-        const container = ref(<div class="three-wrap">{canvas.value}</div>)
+        const canvas = ref(<canvas style={props.removeStyling ? '' : fill} />)
+        const container = ref(
+            <div style={props.removeStyling ? '' : fill}>{canvas.value}</div>
+        )
         const scene = new THREE.Scene()
         let listener: ResizeObserver
         let frame: number
@@ -106,7 +102,7 @@ export const ThreeWrap = defineComponent({
             // Start
             // ====================
             if (props.start) {
-                props.start({ camera, renderer, scene })
+                props.start({ camera: camera as any, renderer, scene })
             }
 
             // ThreeJS render function
@@ -115,7 +111,7 @@ export const ThreeWrap = defineComponent({
                 frame = requestAnimationFrame(() => renderThree())
                 if (props.update) {
                     props.update({
-                        camera,
+                        camera: camera as any,
                         renderer,
                         scene,
                     })
