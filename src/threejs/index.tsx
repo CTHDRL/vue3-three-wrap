@@ -3,13 +3,18 @@ import * as THREE from 'three'
 import { updateCamera } from './updateCamera'
 import './threeWrap.scss'
 
-export interface ThreeWrapOptions {
-    camera: THREE.OrthographicCamera | THREE.PerspectiveCamera
+export interface ThreeWrapOptions<
+    T extends THREE.Camera = THREE.PerspectiveCamera
+> {
+    camera: T
     renderer: THREE.WebGLRenderer
     scene: THREE.Scene
 }
-export type ThreeWrapStart = (opts: ThreeWrapOptions) => void
-export type ThreeWrapUpdate = (opts: ThreeWrapOptions) => void
+export type ThreeWrapStart<T extends THREE.Camera = THREE.PerspectiveCamera> = (
+    opts: ThreeWrapOptions<T>
+) => void
+export type ThreeWrapUpdate<T extends THREE.Camera = THREE.PerspectiveCamera> =
+    (opts: ThreeWrapOptions<T>) => void
 
 export const ThreeWrap = defineComponent({
     name: 'ThreeWrap',
@@ -26,8 +31,12 @@ export const ThreeWrap = defineComponent({
             type: Object as PropType<THREE.WebGLRendererParameters>,
             default: () => ({}),
         },
-        start: Function as PropType<(opts: ThreeWrapOptions) => void>,
-        update: Function as PropType<(opts: ThreeWrapOptions) => void>,
+        start: Function as PropType<
+            ThreeWrapStart<THREE.PerspectiveCamera | THREE.OrthographicCamera>
+        >,
+        update: Function as PropType<
+            ThreeWrapUpdate<THREE.PerspectiveCamera | THREE.OrthographicCamera>
+        >,
     },
     setup(props) {
         const canvas = ref(<canvas />)
