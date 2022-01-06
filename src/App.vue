@@ -1,21 +1,25 @@
-<script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3 + TypeScript + Vite" />
+    <ThreeWrap :start="start" :update="update" />
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<script setup lang="ts">
+import { ThreeWrap, ThreeWrapStart, ThreeWrapUpdate } from './threejs'
+import * as THREE from 'three'
+
+// build a box
+const box = new THREE.Mesh(
+    new THREE.BoxGeometry(),
+    new THREE.MeshBasicMaterial({ color: 'blue' })
+)
+box.position.z = -5
+
+// add the box
+const start: ThreeWrapStart = (opts) => {
+    opts.scene.add(box)
 }
-</style>
+
+// rotate the box
+const update: ThreeWrapUpdate = () => {
+    box.rotation.y -= 0.0166
+}
+</script>
